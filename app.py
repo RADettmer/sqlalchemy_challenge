@@ -17,17 +17,17 @@ Base = automap_base()
 #reflect the tables
 Base.prepare(engine, reflect=True)
 #save reference to the table
-Measurement = Base.classes.measurement
-Station = Base.classes.station
+Mea = Base.classes.measurement
+Sta = Base.classes.station
 
-#create session link to the database - duplicate - already under each route - remove later
+#create session link to the database to generate starting and ending dates
 session = Session(engine)
 
 #create end of search query - final date
-f_date = session.query(func.max(func.strftime("%Y-%m-%d", Measurement.date))).all()
+f_date = session.query(func.max(func.strftime("%Y-%m-%d", Mea.date))).all()
 max_date_str = f_date[0][0]
 max_date = dt.datetime.strptime(max_date_str, "%Y-%m-%d")
-#create beginning of search query - start date
+#create beginning of search query - start date - calculated for a one year period
 s_date = max_date - dt.timedelta(365)
 
 #flask setup
@@ -45,7 +45,7 @@ def home():
         f"/api/v1.0/Precipitation<br/>"
         f"/api/v1.0/Stations<br/>"
         f"/api/v1.0/TOBS<br/>"
-        f"/api/v1.0/datesearch/2016-08-23<br/>"
+        f"/api/v1.0/datesearch/2016-10-13<br/>"
         f"/api/v1.0/rangesearch/2016-10-14/2017-11-14"
     )
 
@@ -53,21 +53,13 @@ def home():
 def precipitation():
     #create session link from python to the database
     session = Session(engine)
-    """Convert the query results to a dictionary using date as the key and prcp as the value"""
-    
-    #create begining date and ending date variables 
-    #create end of search query - final date
-    f_date = session.query(func.max(func.strftime("%Y-%m-%d", Measurement.date))).all()
-    max_date_str = f_date[0][0]
-    max_date = dt.datetime.strptime(max_date_str, "%Y-%m-%d")
-    #create beginning of search query - start date
-    s_date = max_date - dt.timedelta(365)
-
+       
     """Return dates and precipitiation amounts for specific date range"""
     #query all precipitation amounts for specific date range
-    results1 = session.query(func.strftime("%Y-%m-%d", Measurement.date), Measurement.prcp).\
-        filter(func.strftime("%Y-%m-%d", Measurement.date) >= s_date).all()
-        
+    results1 = session.query(func.strftime("%Y-%m-%d", Mea.date), Mea.prcp).\
+        filter(func.strftime("%Y-%m-%d", Mea.date) >= s_date).all()
+
+    """Convert the query results to a dictionary using date as the key and prcp as the value"""       
     #create a dictionary with the date as the key and the prcp value as the value
     all_prcp = []
     for date, prcp in results1:
@@ -87,7 +79,7 @@ def stations():
     
     """Return a list of all station names"""
     #query all station names
-    results2 = session.query(Station.station, Station.name).all()
+    results2 = session.query(Sta.station, Sta.name).all()
 
     #convert list of tuples into a normal list
     sta_names = list(np.ravel(results2))
@@ -101,18 +93,10 @@ def tobs():
     #create session link from python to the database
     session = Session(engine)
 
-    #create begining date and endinging date variables 
-    #create end of search query - final date
-    f_date = session.query(func.max(func.strftime("%Y-%m-%d", Measurement.date))).all()
-    max_date_str = f_date[0][0]
-    max_date = dt.datetime.strptime(max_date_str, "%Y-%m-%d")
-    #create beginning of search query - start date
-    s_date = max_date - dt.timedelta(365)
-
     #query tobs for last year of data for most active station
-    mactsta = session.query(Measurement.station, func.count(Measurement.station)).group_by(Measurement.station).order_by(func.count(Measurement.station).desc()).first()
+    mactsta = session.query(Mea.station, func.count(Mea.station)).group_by(Mea.station).order_by(func.count(Mea.station).desc()).first()
 
-    results3 = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station==mactsta[0]).filter(Measurement.date<=s_date).all()
+    results3 = session.query(Mea.date, Mea.tobs).filter(Mea.station==mactsta[0]).filter(Mea.date<=s_date).all()
 
     #convert list of tuples into a normal list
     tobs_results = list(np.ravel(results3))
@@ -125,10 +109,11 @@ def tobs():
 def start(startdate):
     #create session link from python to the database
     session = Session(engine)
-    
-    #query
-    sel = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
-    results4 = (session.query(*sel).filter(func.strftime("%Y-%m-%d", Measurement.date) >= startdate).group_by(Measurement.date).all())
+
+    """Return a list of miminum, average and maximum temperatures geater than start tdate"""
+    #query measurements for data greater than or equal to start date - 2016-10-13
+    sel = [Mea.date, func.min(Mea.tobs), func.avg(Mea.tobs), func.max(Mea.tobs)]
+    results4 = (session.query(*sel).filter(func.strftime("%Y-%m-%d", Mea.date) >= startdate).group_by(Mea.date).all())
 
     var_data = []
     for result in results4:
@@ -148,10 +133,10 @@ def start_end(startdate, enddate):
     #create session link from python to the database
     session = Session(engine)
     
-    """Return a list of miminum, average and maximum temperatures during date range"""
-    #query stations
-    sel = [Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)]
-    results5 = (session.query(*sel).filter(func.strftime("%Y-%m-%d", Measurement.date) >= startdate).filter(func.strftime("%Y-%m-%d", Measurement.date) <= enddate).group_by(Measurement.date).all())
+    """Return a list of miminum, average and maximum temperatures during between date range"""
+    #query measurements for specific date range - 2016-10-07 thru 2016-11-14
+    sel = [Mea.date, func.min(Mea.tobs), func.avg(Mea.tobs), func.max(Mea.tobs)]
+    results5 = (session.query(*sel).filter(func.strftime("%Y-%m-%d", Mea.date) >= startdate).filter(func.strftime("%Y-%m-%d", Mea.date) <= enddate).group_by(Mea.date).all())
     
     se_data = []
     for result in results5:
