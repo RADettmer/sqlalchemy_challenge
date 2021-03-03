@@ -16,7 +16,7 @@ Scatter diagram showing June and December temperature data
 Area plot showing normal expected temperatures during the period 10-7 thru 10-14 across all years
 ![alt text](https://github.com/RADettmer/sqlalchemy_challenge/blob/master/Images/plot_normals.png)
 	
-plot_precp12mo.png - bar plot showing rainfall between 2016-8-22 and 2017-8-23
+Bar plot showing rainfall between 2016-8-22 and 2017-8-23
 ![alt text](https://github.com/RADettmer/sqlalchemy_challenge/blob/master/Images/plot_precp12mo.png)
 	
 plot_temp12mo.png - plot showing temperature ranges between 2016-8-22 and 2017-8-23
