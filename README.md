@@ -3,6 +3,8 @@ SQLAlchemy Homework
 
 This project/homework works with SQLAlchemy, python and jupyter notebooks.
 
+Tools used include:
+
 1. Climate analysis and exploration - juypter notebook
 2. Climate app - flask application - python
 
@@ -22,4 +24,4 @@ plot_tripavgtemp.png - plot showing average temperatures between 2015-10-7 thru 
 	
 ## Observastions and Inferences
 
-The
+The data
