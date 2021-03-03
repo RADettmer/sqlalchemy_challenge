@@ -26,4 +26,4 @@ plot_tripavgtemp.png - plot showing average temperatures between 2015-10-7 thru 
 	
 ## Observastions and Inferences
 
-The data
+The data is
