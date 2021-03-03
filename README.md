@@ -14,6 +14,7 @@ plot_jundectepscat.png - scatter diagram showing June and December temperature d
 ![alt text](https://github.com/RADettmer/sqlalchemy_challenge/blob/master/images/plot_jundectepscat.png)
 	
 plot_normals.png - area plot showing normal expected temperatures during 10-7 thru 10-14
+![alt text](https://github.com/RADettmer/sqlalchemy_challenge/blob/master/images/plot_normals.png)
 	
 plot_precp12mo.png - bar plot showing rainfall between 2016-8-22 and 2017-8-23
 	
