@@ -11,6 +11,7 @@ Tools used include:
 ### Images - folder
 
 plot_jundectepscat.png - scatter diagram showing June and December temperature data
+![alt text](https://github.com/RADettmer/sqlalchemy_challenge/blob/master/images/plot_jundectepscat.png)
 	
 plot_normals.png - area plot showing normal expected temperatures during 10-7 thru 10-14
 	
