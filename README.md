@@ -30,4 +30,4 @@ Plot showing average temperatures between 2015-10-7 thru 2015-10-14
 
 ## Observastions and Inferences
 
-The data is
+The data is . . .
